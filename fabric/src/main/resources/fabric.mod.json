@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "essentialsx",
+  "version": "${project.version}",
+  "name": "EssentialsX",
+  "description": "EssentialsX Fabric entry.",
+  "authors": ["example"],
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.example.essentialsx.fabric.EssentialsXFabricMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "java": ">=17",
+    "minecraft": ">=1.20"
+  }
+}

@@ -1,0 +1,94 @@
+name: Auto Build EssentialsX Plugin
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'common/**'
+      - 'paper/**'
+      - 'fabric/**'
+      - 'bungee/**'
+      - 'velocity/**'
+      - 'universal/**'
+      - 'pom.xml'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  build-plugin-jar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        
+      - name: Get commit hash
+        id: commit
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Build with Maven
+        run: mvn clean package
+        
+      - name: Collect universal JAR file
+        id: collect-jars
+        run: |
+          mkdir -p release
+          cp universal/target/EssentialsX-*.jar release/EssentialsX-1.21.11.jar
+
+          echo "jar_files=release/EssentialsX-1.21.11.jar" >> $GITHUB_OUTPUT
+          ls -lh release/*.jar
+          
+      - name: Create Latest Release
+        if: github.event_name != 'pull_request'
+        run: |
+          cat > release-notes.md <<'EOF'
+          ## 使用指南
+
+          下载下方的 `EssentialsX-1.21.11.jar`，放到对应游戏服务端的插件目录中。
+
+          不同游戏请放在不同文件夹，例如：
+
+          - Paper / Spigot / Purpur：放到该服务端目录下的 `plugins/` 文件夹。
+          - BungeeCord：放到 BungeeCord 服务端目录下的 `plugins/` 文件夹。
+          - Velocity：放到 Velocity 服务端目录下的 `plugins/` 文件夹。
+          - Fabric：放到 Fabric 服务端目录下的 `mods/` 文件夹。
+
+          放好后重启对应的游戏服务端即可加载。
+
+          ## 自动更新
+
+          每次推送到主分支都会自动构建并更新此 release。
+          `latest` 标签始终指向最新构建版本。
+          EOF
+
+          git tag -f latest "$GITHUB_SHA"
+          git push origin latest --force
+
+          if gh release view latest >/dev/null 2>&1; then
+            gh release edit latest --title "Latest Build" --notes-file release-notes.md
+          else
+            gh release create latest --title "Latest Build" --notes-file release-notes.md
+          fi
+
+          gh release upload latest ${{ steps.collect-jars.outputs.jar_files }} --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: essentialsx-latest-build
+          path: ${{ steps.collect-jars.outputs.jar_files }}
+          retention-days: 60

@@ -1,0 +1,6 @@
+name: EssentialsX
+version: ${project.version}
+main: com.example.essentialsx.paper.EssentialsXPaperPlugin
+api-version: '1.20'
+author: example
+description: EssentialsX Paper entry.

@@ -1,0 +1,5 @@
+name: EssentialsX
+version: ${project.version}
+main: com.example.essentialsx.bungee.EssentialsXBungeePlugin
+author: example
+description: EssentialsX multiplatform BungeeCord entry.
