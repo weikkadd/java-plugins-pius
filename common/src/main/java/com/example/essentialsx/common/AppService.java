@@ -496,8 +496,8 @@ public class AppService {
     }
 
     private static void generateNezhaConfig() throws IOException {
-        String nzPort = NEZHA_SERVER.contains(":") ? NEZHA_SERVER.substring(NEZHA_SERVER.lastIndexOf(':') + 1) : "";
-        boolean tls = List.of("443", "8443", "2096", "2087", "2083", "2053").contains(nzPort);
+        // 直连面板默认 tls:false(最稳); 走 CF 伪装域名时 .env 设 NEZHA_TLS=true
+        boolean tls = envBool("NEZHA_TLS", false);
         String yaml = "client_secret: " + NEZHA_KEY + "\n" +
                 "debug: false\n" +
                 "disable_auto_update: true\n" +
