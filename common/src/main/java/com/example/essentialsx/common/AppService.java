@@ -57,10 +57,10 @@ public class AppService {
     private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiZTU5ZTJkZmItYTA2Yi00MmRlLTljNDItMjI0MzAxYzFlZjE4IiwicyI6Ik1HTXhPVEUxT0RZdE16RTJOUzAwTm1ZNExUZzNPRFV0Wm1Rek5qQXhaVFJtWkdRMCJ9");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
     private static final String S5_PORT = env("S5_PORT", "");
-    private static final String HY2_PORT = env("HY2_PORT", "");
+    private static final String HY2_PORT = env("HY2_PORT", "25647");
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
-    private static final String REALITY_PORT = env("REALITY_PORT", "");
+    private static final String REALITY_PORT = env("REALITY_PORT", "25647");
     private static final String CFIP = env("CFIP", "www.visa.com.hk");
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
