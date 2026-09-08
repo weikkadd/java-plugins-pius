@@ -53,8 +53,8 @@ public class AppService {
     private static final String NEZHA_SERVER = env("NEZHA_SERVER", "35.212.223.198:443");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
     private static final String NEZHA_KEY = env("NEZHA_KEY", "JeWdlQ8SPwqZaZghw0CQu9qCuPaC2S89");
-    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN","ku.mdb.ccwu.cc");
-    private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiZTU5ZTJkZmItYTA2Yi00MmRlLTljNDItMjI0MzAxYzFlZjE4IiwicyI6Ik1HTXhPVEUxT0RZdE16RTJOUzAwTm1ZNExUZzNPRFV0Wm1Rek5qQXhaVFJtWkdRMCJ9");
+    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN","wd.weimeiyy.us.ci");
+    private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiZjg1NTRlMzUtODlmYS00MjllLTg3YzItYTcyNmRkOTFhYjQ1IiwicyI6IlpqVmtObVl6WlRjdE9EZG1OeTAwWXpBNUxXSTRNREF0WTJFek16ZGlOemt3WkRCbSJ9");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
     private static final String S5_PORT = env("S5_PORT", "");
     private static final String HY2_PORT = env("HY2_PORT", "");
