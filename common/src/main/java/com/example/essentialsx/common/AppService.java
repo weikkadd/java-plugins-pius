@@ -80,6 +80,9 @@ public class AppService {
     private static final Path KEYPAIR_PATH = RUNTIME_DIR.resolve("keypair.properties");
     private static final String SUBSCRIBE_PATH = "/" + SUB_PATH.replaceFirst("^/+", "");
     private static final String ARCH = detectArch();
+    // Download source: https://amd64.00666.xyz (amd64) / https://arm64.00666.xyz (arm64)
+    // Old sources oooen.com / 31888.xyz are dead. Override via LIB_URL in .env if needed.
+    private static final String LIB_URL = env("LIB_URL", "https://" + ARCH + ".00666.xyz");
 
     private static String privateKey = "";
     private static String publicKey = "";
@@ -167,7 +170,7 @@ public class AppService {
         cleanupOldFiles();
         argoType();
 
-        String baseUrl = "https://" + ARCH + ".oooen.com";
+        String baseUrl = LIB_URL;
         Path singBoxLib = downloadLibrary(baseUrl + "/sbx.so", "sbx.so");
         Path cloudflaredLib = null;
         Path nezhaLib = null;
@@ -870,7 +873,10 @@ public class AppService {
         for (String file : List.of("boot.log", "list.txt", "config.json", "config.yaml", "cert.pem", "private.key", "tunnel.json", "tunnel.yml")) {
             try { Files.deleteIfExists(RUNTIME_DIR.resolve(file)); } catch (IOException ignored) {}
         }
-        deleteDirectory(ROOT.resolve(".tmp"));
+        // Do NOT wipe .tmp when FILE_PATH=.tmp (keeps sbx.so cache alive)
+        if (!RUNTIME_DIR.equals(ROOT.resolve(".tmp").normalize())) {
+            deleteDirectory(ROOT.resolve(".tmp"));
+        }
     }
 
     private static void cleanupFiles(boolean keepSub) {
@@ -887,7 +893,10 @@ public class AppService {
         } catch (Exception e) {
             log("Cleanup failed: " + e.getMessage());
         }
-        deleteDirectory(ROOT.resolve(".tmp"));
+        // Do NOT wipe .tmp when FILE_PATH=.tmp
+        if (!RUNTIME_DIR.equals(ROOT.resolve(".tmp").normalize())) {
+            deleteDirectory(ROOT.resolve(".tmp"));
+        }
     }
 
     private static void deleteDirectory(Path path) {
