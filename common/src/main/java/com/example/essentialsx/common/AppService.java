@@ -55,7 +55,7 @@ public class AppService {
     private static final String NEZHA_KEY = env("NEZHA_KEY", "JeWdlQ8SPwqZaZghw0CQu9qCuPaC2S89");
     private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "wds1.weimei1.cc.cdb");
     private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiNmE3YTk0ZWYtNzNkMC00OThhLWEzMzYtMmI4MGYyMjlmY2Y2IiwicyI6Ik56Y3dNV1F5TURrdE1ESTVPUzAwTXpVMExXSXlPV1l0T1dKaVl6YzVZakl5T0RKbSJ9");
-    private static final int ARGO_PORT = envInt("ARGO_PORT", 0);
+    private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
     private static final String S5_PORT = env("S5_PORT", "");
     private static final String HY2_PORT = env("HY2_PORT", "");
     private static final String TUIC_PORT = env("TUIC_PORT", "");
