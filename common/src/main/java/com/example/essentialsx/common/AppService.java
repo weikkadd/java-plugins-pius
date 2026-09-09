@@ -652,7 +652,7 @@ public class AppService {
             Map<String, Object> vmess = mapOf(
                     "v", "2", "ps", nodeName, "add", CFIP, "port", CFPORT, "id", UUID,
                     "aid", "0", "scy", "auto", "net", "ws", "type", "none",
-                    "host", argoDomain, "path", "/vmess-argo?ed=2560", "tls", "tls",
+                    "host", argoDomain, "path", "/vmess-argo", "tls", "tls",
                     "sni", argoDomain, "alpn", "", "fp", "firefox"
             );
             nodes.add("vmess://" + Base64.getEncoder().encodeToString(toJson(vmess).getBytes(StandardCharsets.UTF_8)));
