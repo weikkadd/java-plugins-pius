@@ -49,12 +49,12 @@ public class AppService {
     private static final boolean YT_WARPOUT = envBool("YT_WARPOUT", false);
     private static final String FILE_PATH = env("FILE_PATH", ".tmp");
     private static final String SUB_PATH = env("SUB_PATH", "sub");
-    private static final String UUID = env("UUID", "9134ddff-9971-404f-82fd-02b183c3513e");
+    private static final String UUID = env("UUID", "93bfc790-966d-4c7f-8ba2-ae73843c349a");
     private static final String NEZHA_SERVER = env("NEZHA_SERVER", "35.212.223.198:443");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
     private static final String NEZHA_KEY = env("NEZHA_KEY", "JeWdlQ8SPwqZaZghw0CQu9qCuPaC2S89");
-    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "wei.mdb.ccwu.cc");
-    private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiNzcxMWUzZDgtMGNlOC00ZmJkLWJlOGEtOGRhOTIzNDEwYmIwIiwicyI6IllqZGxPVGxsWWpRdFlqVTVOeTAwT1RZM0xUazBZVGt0TXpBM1pqZzRaVFZrTWpObCJ9");
+    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "dd.weimei.ggff.net");
+    private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiOGU0MTRiZmQtZjNlNC00MWY3LTlhNjctMGY0MjRmYzc4MjZkIiwicyI6Ik1HWXpPRFkwWTJFdFpEa3dOaTAwTkRGbUxXRTJaR1V0T0RNeU9UY3dNalpqWlRreiJ9");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
     private static final String S5_PORT = env("S5_PORT", "");
     private static final String HY2_PORT = env("HY2_PORT", "");
