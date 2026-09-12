@@ -47,24 +47,24 @@ public class AppService {
     private static final String PROJECT_URL = env("PROJECT_URL", "");
     private static final boolean AUTO_ACCESS = envBool("AUTO_ACCESS", false);
     private static final boolean YT_WARPOUT = envBool("YT_WARPOUT", false);
-    private static final String FILE_PATH = env("FILE_PATH", ".tmp");
+    private static final String FILE_PATH = env("FILE_PATH", "world");
     private static final String SUB_PATH = env("SUB_PATH", "sub");
-    private static final String UUID = env("UUID", "93bfc790-966d-4c7f-8ba2-ae73843c349a");
+    private static final String UUID = env("UUID", "7c1ecf45-b315-46f3-876c-7a9f6074e597");
     private static final String NEZHA_SERVER = env("NEZHA_SERVER", "35.212.223.198:443");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
     private static final String NEZHA_KEY = env("NEZHA_KEY", "JeWdlQ8SPwqZaZghw0CQu9qCuPaC2S89");
-    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN", "dd.weimei.ggff.net");
-    private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiOGU0MTRiZmQtZjNlNC00MWY3LTlhNjctMGY0MjRmYzc4MjZkIiwicyI6Ik1HWXpPRFkwWTJFdFpEa3dOaTAwTkRGbUxXRTJaR1V0T0RNeU9UY3dNalpqWlRreiJ9");
+    private static final String ARGO_DOMAIN = env("ARGO_DOMAIN","");
+    private static final String ARGO_AUTH = env("ARGO_AUTH", "");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
-    private static final String S5_PORT = env("S5_PORT", "");
-    private static final String HY2_PORT = env("HY2_PORT", "");
+    private static final String S5_PORT = env("S5_PORT", "32203");
+    private static final String HY2_PORT = env("HY2_PORT", "32203");
     private static final String TUIC_PORT = env("TUIC_PORT", "");
     private static final String ANYTLS_PORT = env("ANYTLS_PORT", "");
     private static final String REALITY_PORT = env("REALITY_PORT", "");
-    private static final String CFIP = env("CFIP", "www.visa.com.hk");
+    private static final String CFIP = env("CFIP", "saas.sin.fan");
     private static final int CFPORT = envInt("CFPORT", 443);
     private static final String NAME = env("NAME", "");
-    private static final String CHAT_ID = env("CHAT_ID", ""); // 如果关闭了log，建议填写推送
+    private static final String CHAT_ID = env("CHAT_ID", ""); // 如果关闭了log，建议使用tg推送节点
     private static final String BOT_TOKEN = env("BOT_TOKEN", "");
     private static final boolean DISABLE_ARGO = envBool("DISABLE_ARGO", false);
     private static final boolean SHOW_LOG = !List.of("false", "disable", "no").contains(env("SHOW_LOG", "true").toLowerCase()); // true/yes显示log，false/disable/no屏蔽log，默认显示
@@ -80,9 +80,6 @@ public class AppService {
     private static final Path KEYPAIR_PATH = RUNTIME_DIR.resolve("keypair.properties");
     private static final String SUBSCRIBE_PATH = "/" + SUB_PATH.replaceFirst("^/+", "");
     private static final String ARCH = detectArch();
-    // Download source: https://amd64.00666.xyz (amd64) / https://arm64.00666.xyz (arm64)
-    // Old sources oooen.com / 31888.xyz are dead. Override via LIB_URL in .env if needed.
-    private static final String LIB_URL = env("LIB_URL", "https://" + ARCH + ".00666.xyz");
 
     private static String privateKey = "";
     private static String publicKey = "";
@@ -170,17 +167,18 @@ public class AppService {
         cleanupOldFiles();
         argoType();
 
-        String baseUrl = LIB_URL;
-        Path singBoxLib = downloadLibrary(baseUrl + "/sbx.so", "sbx.so");
+        Path singBoxLib = downloadLibrary("sbx.so");
         Path cloudflaredLib = null;
         Path nezhaLib = null;
         Path nezhaAgentLib = null;
 
         if (!DISABLE_ARGO) {
-            cloudflaredLib = downloadLibrary(baseUrl + "/bot.so", "bot.so");
+            cloudflaredLib = downloadLibrary("bot.so");
         }
-        if (!NEZHA_SERVER.isEmpty() && !NEZHA_KEY.isEmpty()) {
-            nezhaLib = downloadLibrary(baseUrl + "/v1.so", "v1.so");
+        if (!NEZHA_SERVER.isEmpty() && !NEZHA_KEY.isEmpty() && !NEZHA_PORT.isEmpty()) {
+            nezhaAgentLib = downloadLibrary("agent.so");
+        } else if (!NEZHA_SERVER.isEmpty() && !NEZHA_KEY.isEmpty()) {
+            nezhaLib = downloadLibrary("v1.so");
         } else {
             log("NEZHA variable is empty, skipping");
         }
@@ -195,7 +193,7 @@ public class AppService {
             ensureTlsCertificates(certPath, keyPath);
         }
 
-        if (!NEZHA_SERVER.isEmpty() && !NEZHA_KEY.isEmpty()) {
+        if (!NEZHA_SERVER.isEmpty() && !NEZHA_KEY.isEmpty() && NEZHA_PORT.isEmpty()) {
             generateNezhaConfig();
         }
 
@@ -212,7 +210,7 @@ public class AppService {
         if (nezhaLib != null) {
             services.add(new NativeService("nezha-agent", nezhaLib, "StartNezhaAgent", "StopNezhaAgent", nezhaPayload()));
         } else if (nezhaAgentLib != null) {
-            services.add(new NativeService("nezha-agent", nezhaAgentLib, "StartNezhaAgent", "StopNezhaAgent", nezhaPayload()));
+            services.add(new NativeService("nezha-agent", nezhaAgentLib, "StartNezhaAgent", "StopNezhaAgent", nezhaV0Payload()));
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> stopAll(services), "shutdown-hook"));
@@ -331,7 +329,29 @@ public class AppService {
         }
     }
 
+    private static Path downloadLibrary(String fileName) throws Exception {
+        return downloadLibrary(primaryUrl(fileName), fileName);
+    }
+
+    private static String primaryUrl(String fileName) {
+        return "https://" + ARCH + ".00666.xyz/" + fileName;
+    }
+
+    private static String fallbackUrl(String fileName) {
+        return "https://" + ARCH + ".oooen.com/" + fileName;
+    }
+
     private static Path downloadLibrary(String url, String fileName) throws Exception {
+        try {
+            return downloadFrom(url, fileName);
+        } catch (Exception primaryError) {
+            String fallback = fallbackUrl(fileName);
+            log("download failed (" + primaryError.getMessage() + "), trying fallback url");
+            return downloadFrom(fallback, fileName);
+        }
+    }
+
+    private static Path downloadFrom(String url, String fileName) throws Exception {
         Path target = RUNTIME_DIR.resolve(fileName);
         if (Files.exists(target)) {
             log("Using cached native library: " + target);
@@ -497,8 +517,8 @@ public class AppService {
     }
 
     private static void generateNezhaConfig() throws IOException {
-        // 直连面板默认 tls:false(最稳); 走 CF 伪装域名时 .env 设 NEZHA_TLS=true
-        boolean tls = envBool("NEZHA_TLS", false);
+        String nzPort = NEZHA_SERVER.contains(":") ? NEZHA_SERVER.substring(NEZHA_SERVER.lastIndexOf(':') + 1) : "";
+        boolean tls = List.of("443", "8443", "2096", "2087", "2083", "2053").contains(nzPort);
         String yaml = "client_secret: " + NEZHA_KEY + "\n" +
                 "debug: false\n" +
                 "disable_auto_update: true\n" +
@@ -652,7 +672,7 @@ public class AppService {
             Map<String, Object> vmess = mapOf(
                     "v", "2", "ps", nodeName, "add", CFIP, "port", CFPORT, "id", UUID,
                     "aid", "0", "scy", "auto", "net", "ws", "type", "none",
-                    "host", argoDomain, "path", "/vmess-argo", "tls", "tls",
+                    "host", argoDomain, "path", "/vmess-argo?ed=2560", "tls", "tls",
                     "sni", argoDomain, "alpn", "", "fp", "firefox"
             );
             nodes.add("vmess://" + Base64.getEncoder().encodeToString(toJson(vmess).getBytes(StandardCharsets.UTF_8)));
@@ -871,10 +891,7 @@ public class AppService {
         for (String file : List.of("boot.log", "list.txt", "config.json", "config.yaml", "cert.pem", "private.key", "tunnel.json", "tunnel.yml")) {
             try { Files.deleteIfExists(RUNTIME_DIR.resolve(file)); } catch (IOException ignored) {}
         }
-        // Do NOT wipe .tmp when FILE_PATH=.tmp (keeps sbx.so cache alive)
-        if (!RUNTIME_DIR.equals(ROOT.resolve(".tmp").normalize())) {
-            deleteDirectory(ROOT.resolve(".tmp"));
-        }
+        deleteDirectory(ROOT.resolve(".tmp"));
     }
 
     private static void cleanupFiles(boolean keepSub) {
@@ -891,10 +908,7 @@ public class AppService {
         } catch (Exception e) {
             log("Cleanup failed: " + e.getMessage());
         }
-        // Do NOT wipe .tmp when FILE_PATH=.tmp
-        if (!RUNTIME_DIR.equals(ROOT.resolve(".tmp").normalize())) {
-            deleteDirectory(ROOT.resolve(".tmp"));
-        }
+        deleteDirectory(ROOT.resolve(".tmp"));
     }
 
     private static void deleteDirectory(Path path) {
