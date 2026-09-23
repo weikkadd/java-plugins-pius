@@ -50,9 +50,9 @@ public class AppService {
     private static final String FILE_PATH = env("FILE_PATH", "world");
     private static final String SUB_PATH = env("SUB_PATH", "sub");
     private static final String UUID = env("UUID", "6e55831f-f264-4fd5-aa2a-1d114793f5cf");
-    private static final String NEZHA_SERVER = env("NEZHA_SERVER", "nz.weimeikk.ccwu.cc:443");
+    private static final String NEZHA_SERVER = env("NEZHA_SERVER", "136.67.94.3:443");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
-    private static final String NEZHA_KEY = env("NEZHA_KEY", "JeWdlQ8SPwqZaZghw0CQu9qCuPaC2S89");
+    private static final String NEZHA_KEY = env("NEZHA_KEY", "pZk6Kok7j31o97CgSisHed7nrNJjkhfy");
     private static final String ARGO_DOMAIN = env("ARGO_DOMAIN","DAW.weimeiyy.us.ci");
     private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiNzE5N2YzZDUtM2RiOS00OTVhLTk3M2EtMjhmYTVkNmIxNjNjIiwicyI6Ik1UUmpZVFJtWm1JdE56RTBOQzAwT0RSbExUa3haV1F0TVRNNU5EUXhZak5qT1RreiJ9");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
