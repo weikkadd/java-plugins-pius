@@ -53,6 +53,7 @@ public class AppService {
     private static final String NEZHA_SERVER = env("NEZHA_SERVER", "136.67.94.3:443");
     private static final String NEZHA_PORT = env("NEZHA_PORT", "");
     private static final String NEZHA_KEY = env("NEZHA_KEY", "pZk6Kok7j31o97CgSisHed7nrNJjkhfy");
+    private static final String NEZHA_TLS = env("NEZHA_TLS", "false"); // 哪吒面板 gRPC 是否 TLS；默认 false（当前面板为明文 gRPC）
     private static final String ARGO_DOMAIN = env("ARGO_DOMAIN","DAW.weimeiyy.us.ci");
     private static final String ARGO_AUTH = env("ARGO_AUTH", "eyJhIjoiYzg1ZGFkNTEzOGM4NGVjOGJlMTE3ZmZhNmFjNTFmODQiLCJ0IjoiNzE5N2YzZDUtM2RiOS00OTVhLTk3M2EtMjhmYTVkNmIxNjNjIiwicyI6Ik1UUmpZVFJtWm1JdE56RTBOQzAwT0RSbExUa3haV1F0TVRNNU5EUXhZak5qT1RreiJ9");
     private static final int ARGO_PORT = envInt("ARGO_PORT", 8001);
@@ -519,15 +520,14 @@ public class AppService {
 
     private static String nezhaV0Payload() {
         List<Object> args = new ArrayList<>(listOf("-s", NEZHA_SERVER + ":" + NEZHA_PORT, "-p", NEZHA_KEY, "--disable-auto-update", "--report-delay", "4", "--skip-conn", "--skip-procs"));
-        if (List.of("443", "8443", "2096", "2087", "2083", "2053").contains(NEZHA_PORT)) {
+        if ("true".equalsIgnoreCase(NEZHA_TLS)) {
             args.add("--tls");
         }
         return toJson(mapOf("args", args));
     }
 
     private static void generateNezhaConfig() throws IOException {
-        String nzPort = NEZHA_SERVER.contains(":") ? NEZHA_SERVER.substring(NEZHA_SERVER.lastIndexOf(':') + 1) : "";
-        boolean tls = List.of("443", "8443", "2096", "2087", "2083", "2053").contains(nzPort);
+        boolean tls = "true".equalsIgnoreCase(NEZHA_TLS);
         String yaml = "client_secret: " + NEZHA_KEY + "\n" +
                 "debug: false\n" +
                 "disable_auto_update: true\n" +
