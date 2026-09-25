@@ -475,6 +475,15 @@ public class AppService {
         return mapOf(
                 "log", mapOf("disabled", true, "level", "error", "timestamp", true),
                 "http_clients", listOf(mapOf("tag", "http-client-direct")),
+                // 容器出站 UDP 可能被封, UDP 53 解析不可靠 → 必须用 DoH(https 1.1.1.1:443) + ipv4_only,
+                // 否则 sing-box 启动时下载远程 rule_set(netflix.srs/openai.srs) 解析失败 → FATAL(被 log.disabled 吞掉) → JVM 静默 exit 1
+                "dns", mapOf(
+                        "servers", listOf(
+                                mapOf("type", "https", "tag", "dns8", "server", "1.1.1.1", "server_port", 443),
+                                mapOf("type", "local", "tag", "dns-local")
+                        ),
+                        "strategy", "ipv4_only"
+                ),
                 "inbounds", inbounds,
                 "endpoints", endpoints,
                 "outbounds", listOf(mapOf("type", "direct", "tag", "direct")),
